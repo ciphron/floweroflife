@@ -6,7 +6,9 @@ from geom2d import Point, Circle, Color
 from geom2dimpl.svg import SVGPlane
 from geom2dimpl.raster import RasterPlane
 from geom2dimpl.image import ImageRaster
+from geom2dimpl.tkinter import TkinterCanvasPlane
 
+import Tkinter
 
 PLANE_WIDTH = 12
 PLANE_HEIGHT = 9
@@ -103,8 +105,10 @@ def draw_circle_filtered(plane, circle, enclosing_circle, color):
         if is_arc_outside_circle(circle.center, circle.radius,
                                  rangles[0], rangles[1], enclosing_circle):
             rangles.reverse()
-        plane.draw_arc(circle.center, circle.radius, rangles[0],
-                       rangles[1], color)
+        extent = rangles[1] - rangles[0]
+        if extent < 0:
+            extent += 1.0
+        plane.draw_circle_arc(circle, rangles[0], extent, color)
 
 
 def draw_flower_of_life(plane, flower_pattern, center, radius, color):
@@ -194,9 +198,15 @@ def draw_overlapping_circles(plane, center, radius, color, n, ocircles=None):
         plane.draw_circle(dcircle, color)
 
 
+top = Tkinter.Tk()
+
 flower_pattern = create_flower_of_life()
 
 planes = []
+
+canvas = Tkinter.Canvas(top, bg="white", height=600, width=800)
+tk_plane = TkinterCanvasPlane(PLANE_WIDTH, PLANE_HEIGHT, canvas)
+planes.append(tk_plane)
 
 image_raster = ImageRaster(IMAGE_WIDTH, IMAGE_HEIGHT, geom2d.WHITE)
 image_plane = RasterPlane(PLANE_WIDTH, PLANE_HEIGHT, image_raster)
@@ -210,6 +220,8 @@ for plane in planes:
                         Point(PLANE_WIDTH / 2.0, PLANE_HEIGHT / 2.0),
                         FLOWER_RADIUS, geom2d.BLACK)
 
-
+canvas.pack()
 image_raster.save('floweroflife.png')
 svg_plane.save()
+
+top.mainloop()
