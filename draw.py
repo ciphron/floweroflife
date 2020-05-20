@@ -134,35 +134,6 @@ def draw_flower_of_life(plane, flower_pattern, center, radius, color):
         for full_circle in full_circles:
             draw_circle_filtered(plane, circle, full_circle, color)
 
-def draw_flower_lines(plane, flower_points, center, radius, color):
-    circle_radius = radius / 3.0
-
-    outer_circle = Circle(center, radius)
-    plane.draw_circle(outer_circle, color)
-
-    n = len(flower_points)
-    for i in range(n):
-        for j in range(i + 1, n):
-            start = Point(flower_points[i].x*radius + center.x,
-                          flower_points[i].y*radius + center.y)
-
-            end = Point(flower_points[j].x*radius + center.x,
-                        flower_points[j].y*radius + center.y)
-            plane.draw_line(start, end, color)
-
-def create_pattern():
-    center = Point(0, 0)
-    init_circles = []
-    circle1 = Circle(center, 1 / 3.0)
-    init_circles.append(circle1)
-
-    circle2 = Circle(Point(center.x, center.y - 1 / 3.0), 1 / 3.0)
-    init_circles.append(circle2)
-
-    circles = list(init_circles)
-    perform_intersections(circles, center, (3.0 + FP_THRESHOLD) / 3.0)    
-    print len(circles)
-    return circles
 
 def overlapping_circles(n):
     if n < 0:
